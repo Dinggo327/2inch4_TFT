@@ -139,7 +139,7 @@ void updateLd4StatusDisplay() {
 
 //void LCD_2in4_test()
 //{
-//    uint32_t lastUpdateTime = HAL_GetTick(); // 初始化最后更新时�?????????????????????
+//    uint32_t lastUpdateTime = HAL_GetTick(); // 初始化最后更新时�????????????????
 //
 //    // 初始化LCD
 //    LCD_2IN4_Init();
@@ -159,15 +159,15 @@ void updateLd4StatusDisplay() {
 //        uint32_t currentTime = HAL_GetTick();
 //        if (currentTime - lastUpdateTime >= 200)
 //        {
-//            lastUpdateTime = currentTime; // 更新�?????????????????????后一次更新时�?????????????????????
+//            lastUpdateTime = currentTime; // 更新�????????????????后一次更新时�????????????????
 //
 //            // 清除特定区域（数字显示区域）
 //            //Paint_ClearWindows(5, 10, 5 + Font24.Width*3, 10 + Font24.Height, WHITE);
-//            // 读取LD4的状�?????????????????????
+//            // 读取LD4的状�????????????????
 //                      GPIO_PinState ld4_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13);
 //                      // 根据状�?�设置字符串
 //                      strcpy(ld4Status, (ld4_state == GPIO_PIN_SET) ?  "OFF":"ON" );
-//            // 格式化数字为字符�?????????????????????
+//            // 格式化数字为字符�????????????????
 //            sprintf(numStr, "%d", number);
 //
 //            // 绘制数字
@@ -175,7 +175,7 @@ void updateLd4StatusDisplay() {
 //
 //            Paint_DrawString_EN(5, 40, ld4Status, &Font24, BLACK, WHITE);
 //            // 更新LCD显示
-//            // 这里�?????????????????????要添加更新LCD显示的相关代�?????????????????????
+//            // 这里�????????????????要添加更新LCD显示的相关代�????????????????
 //
 //            // 更新数字
 //            if (++number > 100) {
@@ -214,24 +214,24 @@ void updateLd4StatusDisplay() {
 
 //void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 //    if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
-//        // 第一个脉冲捕�???????????????????
+//        // 第一个脉冲捕�??????????????
 //        if (captureValue1 == 0) {
 //            captureValue1 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
 //        }
-//        // 第二个脉冲捕�???????????????????
+//        // 第二个脉冲捕�??????????????
 //        else if (captureValue2 == 0) {
 //            captureValue2 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
 //            if (captureValue2 > captureValue1) {
-//                // 计算两个脉冲之间的周�???????????????????
+//                // 计算两个脉冲之间的周�??????????????
 //
 //                uint32_t difference = captureValue2 - captureValue1; // 两个连续脉冲之间的计数器差�??
-//                float interval = difference / 1000000.0f; // 脉冲间隔时间（假设定时器频率�???????????????????1MHz�???????????????????
-//                float frequency = 1.0f / interval; // 脉冲频率（Hz�???????????????????
-//                uint32_t PPR = 2; // 每转脉冲�???????????????????
-//                fanRPM = (frequency / PPR) * 60.0f; // 转换为每分钟转数（RPM�???????????????????
+//                float interval = difference / 1000000.0f; // 脉冲间隔时间（假设定时器频率�??????????????1MHz�??????????????
+//                float frequency = 1.0f / interval; // 脉冲频率（Hz�??????????????
+//                uint32_t PPR = 2; // 每转脉冲�??????????????
+//                fanRPM = (frequency / PPR) * 60.0f; // 转换为每分钟转数（RPM�??????????????
 //                captureDone = 1;
 //            }
-//            captureValue1 = 0; // 重置捕获值，为下�???????????????????次测量准�???????????????????
+//            captureValue1 = 0; // 重置捕获值，为下�??????????????次测量准�??????????????
 //            captureValue2 = 0;
 //        }
 //    }
@@ -253,7 +253,8 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 //            float timeInSeconds = (float)totalTime / (float)HAL_RCC_GetPCLK1Freq(); // 定时器时钟频率与PCLK1相同
 //            fanRPM = (uint32_t)(60 / timeInSeconds);
             uint32_t pclk1Freq = HAL_RCC_GetPCLK1Freq(); // PCLK1频率
-
+                       // totalTime * (60�????????/分钟) * (PCLK1频率)
+                       // 为避免溢出，我们可以调整乘法和除法的顺序
             fanRPM = (60 * pclk1Freq) / totalTime;
             captureDone = 1;
             captureIndex = 0; // 重置索引
@@ -307,16 +308,16 @@ int main(void)
  // char ld4Status[10];
 
   char rpmString[11]; // Enough to hold the uint32_t value and '\0' character
- //     sprintf(rpmString, "RPM: %lu", fanRPM); // Convert the RPM value to a string
+      sprintf(rpmString, "RPM: %lu", fanRPM); // Convert the RPM value to a string
 
  // Set_Backlight_Brightness(1000);
 
  // LCD_2in4_test();
 
-//     GPIO_PinState ld4_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13);
-//     strcpy(ld4Status, (ld4_state == GPIO_PIN_RESET) ? "ON": "OFF" );
-//     snprintf(ld4Status, sizeof(ld4Status), "LD4:%s", (ld4_state == GPIO_PIN_RESET) ? "ON" : "OFF");
-//     Paint_DrawString_EN(5, 40, ld4Status, &Font24, WHITE, BLUE);
+     GPIO_PinState ld4_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13);
+  //   strcpy(ld4Status, (ld4_state == GPIO_PIN_RESET) ? "ON": "OFF" );
+     snprintf(ld4Status, sizeof(ld4Status), "LD4:%s", (ld4_state == GPIO_PIN_RESET) ? "ON" : "OFF");
+     Paint_DrawString_EN(5, 40, ld4Status, &Font24, WHITE, BLUE);
 
   //   Paint_DrawString_EN(5, 100, rpmString, &Font24, WHITE, BLACK);
   /* USER CODE END 2 */
@@ -350,53 +351,35 @@ int main(void)
 	   {
 	     // Reset the flag
 	     captureDone = 0;
-	   //  HAL_Delay(100);
+	     HAL_Delay(100);
 
 	     snprintf(rpmString, sizeof(rpmString), "RPM: %lu", fanRPM);
 
-	     Paint_ClearWindows(5, 100, 5 + Font24.Width * 12, 100 + Font24.Height, WHITE);
+
+	     Paint_ClearWindows(5, 100, 5 + Font24.Width * 10, 100 + Font24.Height, WHITE);
 	     Paint_DrawString_EN(5, 100, rpmString, &Font24, WHITE, BLACK);
 	   }
 	  else{
-		  Paint_ClearWindows(5, 100, 5 + Font24.Width * 12, 100 + Font24.Height, WHITE);
-		  Paint_DrawString_EN(5, 100, "RPM: missed", &Font24, WHITE, RED);
+		  Paint_ClearWindows(5, 100, 5 + Font24.Width * 10, 100 + Font24.Height, WHITE);
+		 	     Paint_DrawString_EN(5, 100, "missed", &Font24, WHITE, RED);
 	  }
 
-	  char displayString[50]; // 字符串变量，用于存储要显示的文本
-
-	  // 在HAL_TIM_IC_CaptureCallback函数中或任何适当的地方添加以下代�??
 
 
-	  uint32_t pulseValue = captureValues[captureIndex];
-	  uint32_t timeInterval = 0;
+	  uint32_t pulseValue = captureValues[captureIndex]; // 当前脉冲�?
+	  uint32_t timeInterval = 0; // 时间间隔
 	  if (captureIndex > 0) {
 	      timeInterval = captureValues[captureIndex] - captureValues[captureIndex - 1];
 	  }
 
+	  // 将脉冲�?�和时间间隔转换为字符串
 	  sprintf(displayString, "Pulse: %lu,  Interval: %lu", pulseValue, timeInterval);
 
-	  Paint_ClearWindows(5, 130, LCD_2IN4_WIDTH, 130+Font24.Height*3, WHITE);
+	  // 清除LCD上的旧显�?
+	  Paint_ClearWindows(5, 130, LCD_2IN4_WIDTH, 130+Font24.Height*3, WHITE);  //240*320
 
+	  // 在LCD上显示新的字符串
 	  Paint_DrawString_EN(5, 130, displayString, &Font24, BLACK, WHITE);
-
-
-//	  uint32_t pulseValue = captureValues[captureIndex];
-//
-//	  uint32_t timerClockFreq = HAL_RCC_GetPCLK2Freq(); // 获取定时器时钟频�????
-//	  float timeIntervalMs = 0; // 时间间隔（毫秒）
-//
-//	  if (captureIndex > 0) {
-//	      uint32_t timeIntervalCounts = captureValues[captureIndex] - captureValues[captureIndex - 1];
-//	      timeIntervalMs = ((float)timeIntervalCounts / timerClockFreq) * 1000.0f; // 将计数�?�转换为毫秒
-//	  }
-//
-//	  // 格式化字符串以包含脉冲�?�和时间间隔（毫秒）
-//	  char displayString[60]; // 增加字符串长度以适应更多字符
-//	  sprintf(displayString, "Pulse: %lu   Interval: %.2f ms", pulseValue, timeIntervalMs);
-//
-//	  // 清除LCD上的旧显示，并显示新字符�????
-//	  Paint_ClearWindows(5, 130, LCD_2IN4_WIDTH, 130 + Font24.Height * 3, WHITE);
-//	  Paint_DrawString_EN(5, 130, displayString, &Font24, BLACK, WHITE);
 
 	//  HAL_Delay(1000);
 
