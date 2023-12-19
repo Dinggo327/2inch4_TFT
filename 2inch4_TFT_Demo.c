@@ -28,9 +28,6 @@
 /* USER CODE BEGIN Includes */
 #include "GUI_Paint.h"
 #include "fonts.h"
-//#include "image.h"
-//#include "LCD_Test.h"
-
 #include "image_data.h"
 
 #include "image.h"
@@ -38,11 +35,13 @@
 #include "LCD_2inch4.h"
 #include "DEV_Config.h"
 #include "stm32l4xx_hal.h"
+#include "string.h"
+
+char ld4Status[10];
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
 
 /* USER CODE END PTD */
 
@@ -70,6 +69,64 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+int lastButtonState = GPIO_PIN_RESET;
+int checkButtonPressed() {
+    HAL_Delay(10);
+
+    int currentButtonState = HAL_GPIO_ReadPin(USER_GPIO_Port, USER_Pin);
+    int buttonPressed = 0;
+
+    if (lastButtonState == GPIO_PIN_SET && currentButtonState == GPIO_PIN_RESET)
+    {
+        buttonPressed = 1;
+    }
+
+    lastButtonState = currentButtonState;
+
+    return buttonPressed;
+}
+void brighten()
+{
+	while (1)
+	{
+		if(checkButtonPressed())
+			    {
+			    	return;
+			    }
+		HAL_GPIO_WritePin(LD4_GPIO_Port, LD4_Pin, GPIO_PIN_SET);
+
+	}
+}
+void darken()
+{
+	while (1)
+		{
+		if(checkButtonPressed())
+				    {
+				    	return;
+				    }
+			HAL_GPIO_WritePin(LD4_GPIO_Port, LD4_Pin, GPIO_PIN_RESET);
+
+		}
+}
+void updateLd4StatusDisplay() {
+    Paint_ClearWindows(5, 40, 5 + Font24.Width * 7, 40 + Font24.Height, WHITE);
+    GPIO_PinState ld4_state = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_13);
+    snprintf(ld4Status, sizeof(ld4Status), "LD4:%s", (ld4_state == GPIO_PIN_RESET) ? "ON" : "OFF");
+    Paint_DrawString_EN(5, 40, ld4Status, &Font24, WHITE, BLUE);
+}
+
+//void Set_Backlight_Brightness(uint16_t pulseWidth)
+//{
+//    TIM_OC_InitTypeDef sConfigOC = {0};
+//
+//    sConfigOC.OCMode = TIM_OCMODE_PWM1;
+//    sConfigOC.Pulse = pulseWidth; // 设置PWM的脉冲宽度
+//    sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+//    sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+//    HAL_TIM_PWM_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_1);
+//    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_1); // 开始PWM信号输出
+//}
 
 //void LCD_2in4_test()
 //{
@@ -122,7 +179,7 @@ void SystemClock_Config(void);
 
 //void LCD_2in4_test()
 //{
-//    uint32_t lastUpdateTime = HAL_GetTick(); // 初始化最后更新时间
+//    uint32_t lastUpdateTime = HAL_GetTick(); // 初始化最后更新时�?
 //
 //    // 初始化LCD
 //    LCD_2IN4_Init();
@@ -131,22 +188,21 @@ void SystemClock_Config(void);
 //    Paint_SetClearFuntion(LCD_2IN4_Clear);
 //    Paint_SetDisplayFuntion(LCD_2IN4_DrawPaint);
 //
-//    // 在屏幕上绘制一次性的元素
 //    // ... 其他绘制操作 ...
 //
-//    while (1) // 主循环
+//    while (1) // 主循�?
 //    {
 //        uint32_t currentTime = HAL_GetTick(); // 获取当前时间
-//        if (currentTime - lastUpdateTime >= 1000) // 检查是否已过一秒
+//        if (currentTime - lastUpdateTime >= 1000) // �?查是否已过一�?
 //        {
-//            lastUpdateTime = currentTime; // 更新最后一次更新时间
+//            lastUpdateTime = currentTime; // 更新�?后一次更新时�?
 //
 //            // 只更新特定的屏幕部分
 //            Paint_ClearWindows(5, 10, 5 + Font24.Width * strlen("Dinggo"), 10 + Font24.Height, WHITE); // 清除特定区域
-//            Paint_DrawString_EN(5, 10, "Dinggo", &Font24, YELLOW, RED); // 重绘字符串
+//            Paint_DrawString_EN(5, 10, "Dinggo", &Font24, YELLOW, RED); // 重绘字符�?
 //
 //            // 更新LCD显示
-//            // 这里你需要添加更新LCD显示的相关代码，例如调用一个函数将画布内容渲染到屏幕上
+//            // 这里你需要添加更新LCD显示的相关代码，例如调用�?个函数将画布内容渲染到屏幕上
 //        }
 //
 //        // 这里可以添加其他非屏幕更新相关的代码
@@ -155,7 +211,7 @@ void SystemClock_Config(void);
 
 //void LCD_2in4_test()
 //{
-//    uint32_t lastUpdateTime = HAL_GetTick(); // 初始化最后更新时间
+//    uint32_t lastUpdateTime = HAL_GetTick(); // 初始化最后更新时�?
 //
 //    // 初始化LCD
 //    LCD_2IN4_Init();
@@ -164,30 +220,31 @@ void SystemClock_Config(void);
 //    Paint_SetClearFuntion(LCD_2IN4_Clear);
 //    Paint_SetDisplayFuntion(LCD_2IN4_DrawPaint);
 //
-//    uint16_t number = 1; // 初始化数字
-//    char numStr[4];      // 字符串存储数字
+//    uint16_t number = 1; // 初始化数�?
+//    char numStr[4];      // 字符串存储数�?
 //
-//    while (1) // 主循环
+//    while (1) // 主循�?
 //    {
 //        uint32_t currentTime = HAL_GetTick(); // 获取当前时间
-//        if (currentTime - lastUpdateTime >= 1000) // 检查是否已过一秒
+//        if (currentTime - lastUpdateTime >= 1000) // �?查是否已过一�?
 //        {
-//            lastUpdateTime = currentTime; // 更新最后一次更新时间
+//            lastUpdateTime = currentTime; // 更新�?后一次更新时�?
 //
 //            // 清除特定区域（数字显示区域）
-//            Paint_ClearWindows(5, 10, 5 + 50, 10 + Font24.Height, WHITE); // 假设数字宽度不超过50像素
+//       //     Paint_ClearWindows(5, 10, 5 + Font24.Width, 10 + Font24.Height, WHITE);
 //
-//            // 格式化数字为字符串
+//            // 格式化数字为字符�?
 //            sprintf(numStr, "%d", number);
 //
 //            // 绘制数字
 //            Paint_DrawString_EN(5, 10, numStr, &Font24, BLACK, WHITE);
 //
 //            // 更新LCD显示
-//            // 这里需要添加更新LCD显示的相关代码
+//            // 这里�?要添加更新LCD显示的相关代�?
 //
 //            // 更新数字
 //            if (++number > 100) {
+//              Paint_DrawString_EN(5, 10, numStr, &Font24, BLACK, WHITE);
 //                number = 1;
 //            }
 //        }
@@ -196,18 +253,19 @@ void SystemClock_Config(void);
 //    }
 //}
 
-void LCD_2in4_test()
-{
-	DEV_Module_Init();
-    LCD_2IN4_Init();
-    LCD_2IN4_Clear(WHITE);
-    Paint_NewImage(LCD_2IN4_WIDTH, LCD_2IN4_HEIGHT, ROTATE_90, WHITE);
-    Paint_SetClearFuntion(LCD_2IN4_Clear);
-    Paint_SetDisplayFuntion(LCD_2IN4_DrawPaint);
+//void LCD_2in4_test()
+//{
+//	DEV_Module_Init();
+//    LCD_2IN4_Init();
+//    LCD_2IN4_Clear(WHITE);
+//    Paint_NewImage(LCD_2IN4_WIDTH, LCD_2IN4_HEIGHT, ROTATE_90, WHITE);
+//    Paint_SetClearFuntion(LCD_2IN4_Clear);
+//    Paint_SetDisplayFuntion(LCD_2IN4_DrawPaint);
+//
+//    Paint_DrawImage(image_data,0, 0, 199, 112);
+//
+//}
 
-    Paint_DrawImage(image_data,0, 0, 199, 112);
-
-}
 
 /* USER CODE END 0 */
 
@@ -228,7 +286,6 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 
-
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -240,18 +297,22 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_SPI1_Init();
   MX_TIM1_Init();
+  MX_SPI1_Init();
   MX_USART2_UART_Init();
-
   /* USER CODE BEGIN 2 */
+  uint8_t ledState = 0;
+  DEV_Module_Init();
+  LCD_2IN4_Init();
+  LCD_2IN4_Clear(WHITE);
+  Paint_NewImage(LCD_2IN4_WIDTH, LCD_2IN4_HEIGHT, ROTATE_0, WHITE);
+  Paint_SetClearFuntion(LCD_2IN4_Clear);
+  Paint_SetDisplayFuntion(LCD_2IN4_DrawPaint);
 
-
- // Set_Backlight_Brightness(1000);
-
-
-  LCD_2in4_test();
-
+//  Set_Backlight_Brightness(500);
+//  HAL_Delay(100);
+//  htim1.Instance->CCR1 = 00;
+//  HAL_Delay(25);
 
   /* USER CODE END 2 */
 
@@ -259,7 +320,21 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
+	 switch (ledState)
+	 {
+	 	 case 0:{
+	 	 darken();
+	 	 updateLd4StatusDisplay();
+	 	 ledState++;
+	 	 break;
+	 	 }
+	 	 case 1:{
+	 	 brighten();
+	 	 updateLd4StatusDisplay();
+	 	 ledState = 0;
+	 	 break;
+	 	 }
+	 }
 
     /* USER CODE END WHILE */
 
