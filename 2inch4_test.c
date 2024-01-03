@@ -368,27 +368,32 @@ int main(void)
 
 
 
-	  uint32_t pulseValue = captureValues[captureIndex]; // 当前脉冲�?
-	  uint32_t timeInterval = 0; // 时间间隔
-	  if (captureIndex > 0) {
-	      timeInterval = captureValues[captureIndex] - captureValues[captureIndex - 1];
-	  }
+// 从捕获值数组中获取当前索引处的脉冲值
+uint32_t pulseValue = captureValues[captureIndex];
 
-	  // 将脉冲�?�和时间间隔转换为字符串
-	  sprintf(displayString, "Pulse: %lu,  Interval: %lu", pulseValue, timeInterval);
+// 获取定时器时钟频率（PCLK1）
+uint32_t timerClockFreq = HAL_RCC_GetPCLK1Freq();
 
-	  // 清除LCD上的旧显�?
-	  Paint_ClearWindows(5, 130, LCD_2IN4_WIDTH, 130+Font24.Height*3, WHITE);  //240*320
+// 初始化时间间隔（毫秒）
+float timeIntervalMs = 0;
 
-	  // 在LCD上显示新的字符串
-	  Paint_DrawString_EN(5, 130, displayString, &Font24, BLACK, WHITE);
+// 如果已经捕获到至少一个脉冲
+if (captureIndex > 0) {
+    // 计算两个脉冲之间的计数数目
+    uint32_t timeIntervalCounts = captureValues[captureIndex] - captureValues[captureIndex - 1];
 
-	//  HAL_Delay(1000);
+    // 将计数数目转换为时间间隔（毫秒）
+    timeIntervalMs = ((float)timeIntervalCounts / timerClockFreq) * 1000.0f;
+}
 
-//	 snprintf(rpmString, sizeof(rpmString), "RPM: %lu", fanRPM);
-//	 HAL_Delay(100);
-//	 Paint_ClearWindows(5, 100, 5 + Font24.Width*10, 100 + Font24.Height, WHITE);
-//	 Paint_DrawString_EN(5, 100, rpmString, &Font24, WHITE, BLACK);
+// 创建一个字符串以显示脉冲值和时间间隔
+char displayString[60]; // 增加字符串长度以适应更多字符
+sprintf(displayString, "Pulse: %lu   Interval:%.2f ms", pulseValue, timeIntervalMs);
+
+// 清除LCD上旧的显示，并显示新的字符
+Paint_ClearWindows(5, 130, LCD_2IN4_WIDTH, 130 + Font24.Height * 3, WHITE);
+Paint_DrawString_EN(5, 130, displayString, &Font24, BLACK, WHITE);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
