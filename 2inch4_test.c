@@ -238,26 +238,28 @@ void updateLd4StatusDisplay() {
 //}
 
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+	  // 检查触发中断的通道是否为TIM的通道1
     if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
+        // 读取捕获到的脉冲值并存储到数组中
         captureValues[captureIndex] = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
         captureIndex++;
-
-        // 当我们捕获足够的脉冲来计算RPM
+        // 如果已经捕获了足够的脉冲数（假设为4）
         if (captureIndex >= 4) {
-            uint32_t totalTime = 0;
-            // 计算总时
+            uint32_t totalTime = 0; // 计算总的时间间隔
+            // 计算每两个脉冲之间的时间间隔，并累加到总时间中
             for (int i = 1; i < 4; i++) {
                 totalTime += captureValues[i] - captureValues[i-1];
             }
 
-//            float timeInSeconds = (float)totalTime / (float)HAL_RCC_GetPCLK1Freq(); // 定时器时钟频率与PCLK1相同
-//            fanRPM = (uint32_t)(60 / timeInSeconds);
+//          float timeInSeconds = (float)totalTime / (float)HAL_RCC_GetPCLK1Freq(); // 定时器时钟频率与PCLK1相同
+//          fanRPM = (uint32_t)(60 / timeInSeconds);
+            // 计算脉冲信号的时间间隔并将其转换为RPM
             uint32_t pclk1Freq = HAL_RCC_GetPCLK1Freq(); // PCLK1频率
-                       // totalTime * (60�????????/分钟) * (PCLK1频率)
-                       // 为避免溢出，我们可以调整乘法和除法的顺序
             fanRPM = (60 * pclk1Freq) / totalTime;
+
             captureDone = 1;
-            captureIndex = 0; // 重置索引
+
+            captureIndex = 0;
         }
     }
 }
