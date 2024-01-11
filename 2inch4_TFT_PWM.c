@@ -99,24 +99,36 @@ void printRPM()
 		}
 	}
 }
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+
+    if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
+        captureValues[captureIndex] = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
+        captureIndex++;
+        if (captureIndex >= 4) {
+            uint32_t totalTime = 0;
+
+            for (int i = 1; i < 4; i++) {
+                totalTime += captureValues[i] - captureValues[i-1];
+            }
+//          float timeInSeconds = (float)totalTime / (float)HAL_RCC_GetPCLK1Freq(); // 定时器时钟频率与PCLK1相同
+//          fanRPM = (uint32_t)(60 / timeInSeconds);
+            uint32_t pclk1Freq = HAL_RCC_GetPCLK1Freq(); // PCLK1频率
+            fanRPM = (20 * pclk1Freq) / totalTime;
+
+            captureDone = 1;
+            captureIndex = 0;
+        }
+    }
+}
+
 //void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
-//
-//    if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
-//        captureValues[captureIndex] = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
-//        captureIndex++;
-//        if (captureIndex >= 4) {
-//            uint32_t totalTime = 0;
-//
-//            for (int i = 1; i < 4; i++) {
-//                totalTime += captureValues[i] - captureValues[i-1];
-//            }
-////          float timeInSeconds = (float)totalTime / (float)HAL_RCC_GetPCLK1Freq(); // 定时器时钟频率与PCLK1相同
-////          fanRPM = (uint32_t)(60 / timeInSeconds);
-//            uint32_t pclk1Freq = HAL_RCC_GetPCLK1Freq(); // PCLK1频率
-//            fanRPM = (60 * pclk1Freq) / totalTime;
-//
-//            captureDone = 1;
-//            captureIndex = 0;
+//     if(htim -> Instance == TIM2)   {
+//        if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) { // 使用CH1通道
+//          uint32_t pulseWidth = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
+//          float frequency = (float)HAL_RCC_GetPCLK1Freq() / (float)(pulseWidth * 60);
+//          fanRPM = frequency;
+//          captureDone = 1;
+//          captureIndex = 0;
 //        }
 //    }
 //}
@@ -139,24 +151,20 @@ void printRPM()
 //    }
 //}
 
-void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
-    if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
-    	 captureValues[captureIndex] = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
-    	        captureIndex++;
-
-        uint32_t pwmValue = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
-
-        // 计算PWM占空比（百分比）
-        float dutyCyclePercentage = ((float)pwmValue / (float)htim->Instance->ARR) * 100.0f;
-
-        fanRPM=dutyCyclePercentage;
-
-                  captureDone = 1;
-                  // 重置捕获索引
-                  captureIndex = 0;
-    }
-}
-
+//void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+//    if (htim->Instance == TIM2) {
+//        if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
+//            uint32_t pulseWidth = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
+//            uint32_t period = __HAL_TIM_GET_AUTORELOAD(htim);
+//
+//            float dutyCycle = ((float)pulseWidth / (float)period) * 1000.0f;
+//
+//          fanRPM=dutyCycle;
+//          captureDone = 1;
+//          captureIndex = 0;
+//        }
+//    }
+//}
 /* USER CODE END 0 */
 
 /**
