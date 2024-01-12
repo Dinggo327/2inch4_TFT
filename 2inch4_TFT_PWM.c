@@ -114,7 +114,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 //          fanRPM = (uint32_t)(60 / timeInSeconds);
             uint32_t pclk1Freq = HAL_RCC_GetPCLK1Freq(); // PCLK1频率
             fanRPM = (20 * pclk1Freq) / totalTime;
-
+     //       fanRPM = pclk1Freq;
             captureDone = 1;
             captureIndex = 0;
         }
