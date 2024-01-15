@@ -121,6 +121,23 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
     }
 }
 
+// void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+//     if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
+//         captureValues[captureIndex] = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
+//         captureIndex++;
+//         if (captureIndex >= 2) {
+//             uint32_t highTime = captureValues[1] - captureValues[0];
+//             uint32_t period = captureValues[1] - captureValues[0];
+//             float dutyCycle = ((float)highTime / period) * 100;
+
+//             // 在这里使用占空比进行你的操作
+//             fanRPM = dutyCycle;
+//              captureDone = 1;
+//             captureIndex = 0;
+//         }
+//     }
+// }
+
 //void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 //     if(htim -> Instance == TIM2)   {
 //        if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) { // 使用CH1通道
