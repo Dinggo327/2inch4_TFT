@@ -165,6 +165,37 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 //        }
 //    }
 //}
+
+// // 声明一个变量用于存储高电平时间
+// uint32_t highTime;
+// void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
+//     if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
+//         captureValues[captureIndex] = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
+//         captureIndex++;
+//         if (captureIndex >= 4) {
+//             uint32_t totalTime = 0;
+//             for (int i = 1; i < 4; i++) {
+//                 totalTime += captureValues[i] - captureValues[i-1];
+//             }
+//             // 计算脉冲周期
+//             uint32_t pulsePeriod = totalTime / 4;
+//             // 读取第二个捕获值（上升沿）
+//             uint32_t risingEdge = captureValues[1];
+//             // 读取第三个捕获值（下降沿）
+//             uint32_t fallingEdge = captureValues[2];
+//             // 计算高电平时间
+//             highTime = fallingEdge - risingEdge;
+//             // 计算占空比（四舍五入为整数）
+//             int dutyCycle = (int)(((float)highTime / pulsePeriod) * 100.0f + 0.5f);
+//             // 将计算结果用于需要的地方，比如打印到串口或者其他操作
+//             // dutyCycle 可以是全局变量，或者传递给其他函数进行处理
+//             // ...
+//             // 重置捕获值的索引
+//             captureDone = 1;
+//             captureIndex = 0;
+//         }
+//     }
+// }
 /* USER CODE END 0 */
 
 /**
