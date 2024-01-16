@@ -121,6 +121,26 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
     }
 }
 
+// // 这是定时器输入捕获中断的回调函数
+// void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
+// {
+
+//     CCR1 = HAL_TIM_ReadCapturedValue(&htim2, TIM_CHANNEL_1);
+
+//     // 检查是否成功捕获到输入信号
+//     if (CCR1 != 0)
+//     {
+//         CCR2 = HAL_TIM_ReadCapturedValue(&htim2, TIM_CHANNEL_2);
+
+//         // 计算输入信号的占空比
+//        float duty_cycle = (float)(CCR2 + 1) * 100 / (CCR1 + 1);
+
+//        fanRPM = duty_cycle;
+//        captureDone = 1;
+//     }
+//   
+// }
+
 // void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) {
 //     if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
 //         captureValues[captureIndex] = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
