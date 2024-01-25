@@ -139,7 +139,7 @@ void updateLd4StatusDisplay() {
 
 //void LCD_2in4_test()
 //{
-//    uint32_t lastUpdateTime = HAL_GetTick(); // 初始化最后更新时�????????????????
+//    uint32_t lastUpdateTime = HAL_GetTick(); 
 //
 //    // 初始化LCD
 //    LCD_2IN4_Init();
@@ -159,7 +159,7 @@ void updateLd4StatusDisplay() {
 //        uint32_t currentTime = HAL_GetTick();
 //        if (currentTime - lastUpdateTime >= 200)
 //        {
-//            lastUpdateTime = currentTime; // 更新�????????????????后一次更新时�????????????????
+//            lastUpdateTime = currentTime;
 //
 //            // 清除特定区域（数字显示区域）
 //            //Paint_ClearWindows(5, 10, 5 + Font24.Width*3, 10 + Font24.Height, WHITE);
@@ -175,7 +175,7 @@ void updateLd4StatusDisplay() {
 //
 //            Paint_DrawString_EN(5, 40, ld4Status, &Font24, BLACK, WHITE);
 //            // 更新LCD显示
-//            // 这里�????????????????要添加更新LCD显示的相关代�????????????????
+//           
 //
 //            // 更新数字
 //            if (++number > 100) {
@@ -222,16 +222,15 @@ void updateLd4StatusDisplay() {
 //        else if (captureValue2 == 0) {
 //            captureValue2 = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
 //            if (captureValue2 > captureValue1) {
-//                // 计算两个脉冲之间的周�??????????????
 //
 //                uint32_t difference = captureValue2 - captureValue1; // 两个连续脉冲之间的计数器差�??
-//                float interval = difference / 1000000.0f; // 脉冲间隔时间（假设定时器频率�??????????????1MHz�??????????????
-//                float frequency = 1.0f / interval; // 脉冲频率（Hz�??????????????
-//                uint32_t PPR = 2; // 每转脉冲�??????????????
-//                fanRPM = (frequency / PPR) * 60.0f; // 转换为每分钟转数（RPM�??????????????
+//                float interval = difference / 1000000.0f; 
+//                float frequency = 1.0f / interval; 
+//                uint32_t PPR = 2; 
+//                fanRPM = (frequency / PPR) * 60.0f; 
 //                captureDone = 1;
 //            }
-//            captureValue1 = 0; // 重置捕获值，为下�??????????????次测量准�??????????????
+//            captureValue1 = 0; 
 //            captureValue2 = 0;
 //        }
 //    }
